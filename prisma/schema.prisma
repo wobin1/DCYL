@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Submission {
+  id          String   @id @default(cuid())
+  fullName    String
+  phoneNumber String
+  schoolName  String
+  gradeLevel  String
+  essayTitle  String
+  content     String?  // HTML content from editor
+  filePath    String?  // Path to uploaded file
+  createdAt   DateTime @default(now())
+  status      String   @default("PENDING") // PENDING, REVIEWED, SHORTLISTED
+}
+
+model User {
+  id       String @id @default(cuid())
+  username String @unique
+  password String
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
