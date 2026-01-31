@@ -12,20 +12,77 @@ const JWT_SECRET = new TextEncoder().encode(
 
 export async function submitEssay(formData: any) {
     try {
-        const submission = await prisma.submission.create({
-            data: {
-                fullName: formData.fullName,
-                phoneNumber: formData.phoneNumber,
-                schoolName: formData.schoolName,
-                gradeLevel: formData.gradeLevel,
-                essayTitle: formData.essayTitle,
-                content: formData.content || null,
-                status: "PENDING",
-            },
-        });
+        let filePath: string | null = null;
+        let content: string | null = null;
 
-        revalidatePath("/admin");
-        return { success: true, id: submission.id };
+        // Check if formData is FormData (file upload) or regular object (HTML content)
+        if (formData instanceof FormData) {
+            const file = formData.get("file") as File | null;
+
+            if (file && file.size > 0) {
+                // Validate file type
+                const allowedTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+                if (!allowedTypes.includes(file.type)) {
+                    return { success: false, error: "Invalid file type. Only PDF and DOCX files are allowed." };
+                }
+
+                // Validate file size (10MB limit)
+                const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+                if (file.size > maxSize) {
+                    return { success: false, error: "File size exceeds 10MB limit." };
+                }
+
+                // Generate unique filename
+                const timestamp = Date.now();
+                const randomId = Math.random().toString(36).substring(2, 9);
+                const extension = file.name.split(".").pop();
+                const filename = `essay-${timestamp}-${randomId}.${extension}`;
+
+                // Save file to public/uploads directory
+                const fs = await import("fs/promises");
+                const path = await import("path");
+                const uploadsDir = path.join(process.cwd(), "public", "uploads");
+                const filepath = path.join(uploadsDir, filename);
+
+                const buffer = Buffer.from(await file.arrayBuffer());
+                await fs.writeFile(filepath, buffer);
+
+                filePath = `/uploads/${filename}`;
+            }
+
+            // Extract form fields from FormData
+            const submission = await prisma.submission.create({
+                data: {
+                    fullName: formData.get("fullName") as string,
+                    phoneNumber: formData.get("phoneNumber") as string,
+                    schoolName: formData.get("schoolName") as string,
+                    gradeLevel: formData.get("gradeLevel") as string,
+                    essayTitle: formData.get("essayTitle") as string,
+                    content: formData.get("content") as string || null,
+                    filePath: filePath,
+                    status: "PENDING",
+                },
+            });
+
+            revalidatePath("/admin");
+            return { success: true, id: submission.id };
+        } else {
+            // Handle regular object (HTML content only)
+            const submission = await prisma.submission.create({
+                data: {
+                    fullName: formData.fullName,
+                    phoneNumber: formData.phoneNumber,
+                    schoolName: formData.schoolName,
+                    gradeLevel: formData.gradeLevel,
+                    essayTitle: formData.essayTitle,
+                    content: formData.content || null,
+                    status: "PENDING",
+                },
+            });
+
+            revalidatePath("/admin");
+            return { success: true, id: submission.id };
+        }
     } catch (error) {
         console.error("Submission error:", error);
         return { success: false, error: "Failed to submit essay" };

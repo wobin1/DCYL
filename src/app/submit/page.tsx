@@ -53,9 +53,24 @@ export default function SubmitPage() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsSubmitting(true);
         try {
-            // In a real app, we would send this to an API
-            // console.log(values, file); // Removed as per instruction
-            const res = await submitEssay(values);
+            let res;
+
+            if (submissionMethod === "upload" && file) {
+                // Create FormData for file upload
+                const formData = new FormData();
+                formData.append("fullName", values.fullName);
+                formData.append("phoneNumber", values.phoneNumber);
+                formData.append("schoolName", values.schoolName);
+                formData.append("gradeLevel", values.gradeLevel);
+                formData.append("essayTitle", values.essayTitle);
+                formData.append("file", file);
+
+                res = await submitEssay(formData);
+            } else {
+                // Submit HTML content
+                res = await submitEssay(values);
+            }
+
             if (res.success) {
                 toast.success("Submission successful!", {
                     description: "Your essay has been received. Good luck!",

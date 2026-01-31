@@ -15,6 +15,7 @@ import { isAuthenticated, logout } from "@/app/actions";
 import { redirect } from "next/navigation";
 
 import { UserManagement } from "@/components/admin/user-management";
+import { SubmissionViewer } from "@/components/admin/submission-viewer";
 
 export default async function AdminPage() {
     const auth = await isAuthenticated();
@@ -125,7 +126,7 @@ export default async function AdminPage() {
                                                         {new Date(sub.createdAt).toLocaleDateString()}
                                                     </TableCell>
                                                     <TableCell className="text-right">
-                                                        <Button variant="ghost" size="sm">View</Button>
+                                                        <SubmissionViewer submission={sub} />
                                                     </TableCell>
                                                 </TableRow>
                                             ))
