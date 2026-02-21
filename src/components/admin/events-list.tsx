@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Edit, Trash2, Calendar, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 
 interface Event {
     id: string;
@@ -20,23 +21,29 @@ interface Event {
 
 export function EventsList({ events: initial }: { events: Event[] }) {
     const [events, setEvents] = useState(initial);
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this event?")) return;
+    const handleDelete = async () => {
+        if (!deleteId) return;
+        setIsDeleting(true);
 
         try {
-            const response = await fetch(`/api/admin/events/${id}`, {
+            const response = await fetch(`/api/admin/events/${deleteId}`, {
                 method: "DELETE",
             });
 
             if (response.ok) {
-                setEvents(events.filter((e) => e.id !== id));
+                setEvents(events.filter((e) => e.id !== deleteId));
                 toast.success("Event deleted successfully");
             } else {
                 toast.error("Failed to delete event");
             }
         } catch (error) {
             toast.error("An error occurred");
+        } finally {
+            setIsDeleting(false);
+            setDeleteId(null);
         }
     };
 
@@ -79,7 +86,7 @@ export function EventsList({ events: initial }: { events: Event[] }) {
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    onClick={() => handleDelete(event.id)}
+                                    onClick={() => setDeleteId(event.id)}
                                 >
                                     <Trash2 className="h-4 w-4 text-red-500" />
                                 </Button>
@@ -88,6 +95,15 @@ export function EventsList({ events: initial }: { events: Event[] }) {
                     </CardContent>
                 </Card>
             ))}
+
+            <DeleteConfirmDialog
+                isOpen={!!deleteId}
+                onClose={() => setDeleteId(null)}
+                onConfirm={handleDelete}
+                loading={isDeleting}
+                title="Delete Event"
+                description="Are you sure you want to delete this event? This action cannot be undone."
+            />
         </div>
     );
 }

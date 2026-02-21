@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
+import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 
 interface TeamMember {
     id: string;
@@ -20,23 +21,29 @@ interface TeamMember {
 
 export function TeamMembersList({ teamMembers: initial }: { teamMembers: TeamMember[] }) {
     const [teamMembers, setTeamMembers] = useState(initial);
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this team member?")) return;
+    const handleDelete = async () => {
+        if (!deleteId) return;
+        setIsDeleting(true);
 
         try {
-            const response = await fetch(`/api/admin/team/${id}`, {
+            const response = await fetch(`/api/admin/team/${deleteId}`, {
                 method: "DELETE",
             });
 
             if (response.ok) {
-                setTeamMembers(teamMembers.filter((m) => m.id !== id));
+                setTeamMembers(teamMembers.filter((m) => m.id !== deleteId));
                 toast.success("Team member deleted successfully");
             } else {
                 toast.error("Failed to delete team member");
             }
         } catch (error) {
             toast.error("An error occurred");
+        } finally {
+            setIsDeleting(false);
+            setDeleteId(null);
         }
     };
 
@@ -80,7 +87,7 @@ export function TeamMembersList({ teamMembers: initial }: { teamMembers: TeamMem
                                     variant="outline"
                                     size="sm"
                                     className="flex-1"
-                                    onClick={() => handleDelete(member.id)}
+                                    onClick={() => setDeleteId(member.id)}
                                 >
                                     <Trash2 className="h-4 w-4 text-red-500" />
                                 </Button>
@@ -89,6 +96,15 @@ export function TeamMembersList({ teamMembers: initial }: { teamMembers: TeamMem
                     </CardContent>
                 </Card>
             ))}
+
+            <DeleteConfirmDialog
+                isOpen={!!deleteId}
+                onClose={() => setDeleteId(null)}
+                onConfirm={handleDelete}
+                loading={isDeleting}
+                title="Remove Team Member"
+                description="Are you sure you want to remove this team member? This action is permanent."
+            />
         </div>
     );
 }

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Edit, Trash2, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { DeleteConfirmDialog } from "./delete-confirm-dialog";
 
 interface Program {
     id: string;
@@ -23,23 +24,29 @@ interface Program {
 
 export function ProgramsList({ programs: initialPrograms }: { programs: Program[] }) {
     const [programs, setPrograms] = useState(initialPrograms);
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this program?")) return;
+    const handleDelete = async () => {
+        if (!deleteId) return;
+        setIsDeleting(true);
 
         try {
-            const response = await fetch(`/api/admin/programs/${id}`, {
+            const response = await fetch(`/api/admin/programs/${deleteId}`, {
                 method: "DELETE",
             });
 
             if (response.ok) {
-                setPrograms(programs.filter((p) => p.id !== id));
+                setPrograms(programs.filter((p) => p.id !== deleteId));
                 toast.success("Program deleted successfully");
             } else {
                 toast.error("Failed to delete program");
             }
         } catch (error) {
             toast.error("An error occurred");
+        } finally {
+            setIsDeleting(false);
+            setDeleteId(null);
         }
     };
 
@@ -115,7 +122,7 @@ export function ProgramsList({ programs: initialPrograms }: { programs: Program[
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() => handleDelete(program.id)}
+                                        onClick={() => setDeleteId(program.id)}
                                     >
                                         <Trash2 className="h-4 w-4 text-red-500" />
                                     </Button>
@@ -125,6 +132,15 @@ export function ProgramsList({ programs: initialPrograms }: { programs: Program[
                     </Card>
                 ))
             )}
+
+            <DeleteConfirmDialog
+                isOpen={!!deleteId}
+                onClose={() => setDeleteId(null)}
+                onConfirm={handleDelete}
+                loading={isDeleting}
+                title="Delete Program"
+                description="Are you sure you want to delete this program? All associated data will be permanently removed."
+            />
         </div>
     );
 }
