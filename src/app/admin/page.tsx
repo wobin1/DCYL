@@ -10,10 +10,17 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Eye, Download, Search, Settings, LogOut, LayoutDashboard } from "lucide-react";
+import { Eye, Download, Search, Settings, LogOut, LayoutDashboard, ChevronDown, FileSpreadsheet, FileText, FolderArchive } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { isAuthenticated, logout } from "@/app/actions";
 import { redirect } from "next/navigation";
+
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { UserManagement } from "@/components/admin/user-management";
 import { SubmissionViewer } from "@/components/admin/submission-viewer";
@@ -59,9 +66,28 @@ export default async function AdminPage() {
                                 <LayoutDashboard className="h-4 w-4" /> Go to CMS
                             </Link>
                         </Button>
-                        <Button variant="outline" size="sm" className="gap-2">
-                            <Download className="h-4 w-4" /> Export All
-                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm" className="gap-2 bg-slate-800 text-white hover:bg-slate-900">
+                                    <Download className="h-4 w-4" /> Export Report <ChevronDown className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuItem asChild>
+                                    <a href="/api/submissions/export" download className="flex items-center gap-2 cursor-pointer w-full">
+                                        <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
+                                        <span>Export CSV</span>
+                                    </a>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                    <a href="/api/submissions/export/pdf" download className="flex items-center gap-2 cursor-pointer w-full">
+                                        <FileText className="h-4 w-4 text-rose-600" />
+                                        <span>Export PDF</span>
+                                    </a>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
                         <form action={handleLogout}>
                             <Button type="submit" variant="ghost" size="sm" className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10">
                                 <LogOut className="h-4 w-4" /> Logout
@@ -90,9 +116,16 @@ export default async function AdminPage() {
                                     <CardTitle>Total Entries: {submissions.length}</CardTitle>
                                     <CardDescription>Review and manage student essay submissions.</CardDescription>
                                 </div>
-                                <div className="relative w-full max-w-sm">
-                                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                                    <Input placeholder="Search students or schools..." className="pl-10" />
+                                <div className="flex items-center gap-3 w-full max-w-xl">
+                                    <div className="relative flex-1">
+                                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                                        <Input placeholder="Search students or schools..." className="pl-10" />
+                                    </div>
+                                    <Button variant="outline" size="sm" className="gap-2 bg-teal-600 text-white hover:bg-teal-700 border-teal-600" asChild>
+                                        <a href="/api/submissions/download-all" download>
+                                            <FolderArchive className="h-4 w-4" /> Download All
+                                        </a>
+                                    </Button>
                                 </div>
                             </CardHeader>
                             <CardContent>
