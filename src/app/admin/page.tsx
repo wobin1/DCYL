@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Eye, Download, Search, Settings, LogOut } from "lucide-react";
+import { Eye, Download, Search, Settings, LogOut, LayoutDashboard } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { isAuthenticated, logout } from "@/app/actions";
 import { redirect } from "next/navigation";
@@ -53,6 +54,11 @@ export default async function AdminPage() {
                             </Label>
                         </div>
                         <div className="h-6 w-[1px] bg-slate-200" />
+                        <Button variant="outline" size="sm" className="gap-2" asChild>
+                            <Link href="/admin/dashboard">
+                                <LayoutDashboard className="h-4 w-4" /> Go to CMS
+                            </Link>
+                        </Button>
                         <Button variant="outline" size="sm" className="gap-2">
                             <Download className="h-4 w-4" /> Export All
                         </Button>

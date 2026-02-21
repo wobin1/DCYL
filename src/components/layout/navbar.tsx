@@ -22,13 +22,13 @@ export function Navbar() {
                     <Link href="/#about" className="transition-colors hover:text-teal-600">
                         About
                     </Link>
-                    <Link href="/#initiatives" className="transition-colors hover:text-teal-600">
-                        Initiatives
+                    <Link href="/#programs" className="transition-colors hover:text-teal-600">
+                        Programs
                     </Link>
-                    <Link href="/#podcast" className="transition-colors hover:text-teal-600">
-                        Podcast
+                    <Link href="/#team" className="transition-colors hover:text-teal-600">
+                        Team
                     </Link>
-                    <Link href="/#contact" className="transition-colors hover:text-teal-600">
+                    <Link href="/contact" className="transition-colors hover:text-teal-600">
                         Contact
                     </Link>
                     <div className="h-6 w-[1px] bg-border mx-2 hidden md:block" />

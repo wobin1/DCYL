@@ -30,18 +30,18 @@ export function Footer() {
                     <div>
                         <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Quick Links</h3>
                         <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
-                            <li><Link href="/#about" className="hover:text-teal-600 transition-colors">About the Event</Link></li>
-                            <li><Link href="/#rules" className="hover:text-teal-600 transition-colors">Rules & Guidelines</Link></li>
-                            <li><Link href="/#timeline" className="hover:text-teal-600 transition-colors">Event Schedule</Link></li>
-                            <li><Link href="/submit" className="hover:text-teal-600 transition-colors">Submit Essay</Link></li>
+                            <li><Link href="/#about" className="hover:text-teal-600 transition-colors">About Us</Link></li>
+                            <li><Link href="/#programs" className="hover:text-teal-600 transition-colors">Our Programs</Link></li>
+                            <li><Link href="/#team" className="hover:text-teal-600 transition-colors">Our Team</Link></li>
+                            <li><Link href="/contact" className="hover:text-teal-600 transition-colors">Contact Us</Link></li>
                         </ul>
                     </div>
                     <div>
                         <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">Contact</h3>
                         <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
                             <li>info@gideondunioh.org</li>
-                            <li>essays@gideondunioh.org</li>
-                            <li>+234 XXX XXX XXXX</li>
+                            <li>+234 800 000 0000</li>
+                            <li>Lagos, Nigeria</li>
                         </ul>
                     </div>
                     <div>

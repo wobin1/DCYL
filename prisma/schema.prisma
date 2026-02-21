@@ -31,3 +31,148 @@ model Setting {
   key   String @unique
   value String
 }
+
+// ===== NGO WEBSITE CMS MODELS =====
+
+// Site-wide settings
+model SiteSettings {
+  id              String   @id @default(cuid())
+  mission         String
+  vision          String
+  foundingStory   String
+  founderName     String
+  founderTitle    String
+  founderMessage  String
+  founderImageUrl String?
+  contactEmail    String
+  contactPhone    String
+  updatedAt       DateTime @updatedAt
+}
+
+// Core values
+model Value {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  icon        String   // Icon name from lucide-react
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+// History timeline
+model Milestone {
+  id          String   @id @default(cuid())
+  year        String
+  title       String
+  description String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+// Programs
+model Program {
+  id              String        @id @default(cuid())
+  name            String
+  slug            String        @unique
+  description     String
+  longDescription String?
+  impact          String        // e.g., "500 students reached"
+  imageUrl        String?
+  order           Int           @default(0)
+  active          Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  testimonials    Testimonial[]
+}
+
+// Impact metrics
+model ImpactMetric {
+  id        String   @id @default(cuid())
+  label     String   // e.g., "Students Reached"
+  value     String   // e.g., "5,000+"
+  icon      String   // Icon name
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+// Testimonials/Success Stories
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  location  String?
+  quote     String
+  imageUrl  String?
+  programId String?
+  program   Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
+  featured  Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+// Annual Reports
+model AnnualReport {
+  id            String   @id @default(cuid())
+  year          String
+  title         String
+  fileUrl       String
+  coverImageUrl String?
+  createdAt     DateTime @default(now())
+}
+
+// Donation Tiers
+model DonationTier {
+  id          String   @id @default(cuid())
+  amount      Int
+  currency    String   @default("NGN")
+  description String   // What this amount provides
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+// Volunteer Opportunities
+model VolunteerRole {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  requirements String
+  active       Boolean  @default(true)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+}
+
+// Events
+model Event {
+  id              String    @id @default(cuid())
+  title           String
+  description     String
+  date            DateTime
+  endDate         DateTime?
+  location        String?
+  imageUrl        String?
+  registrationUrl String?
+  active          Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+}
+
+// Partners
+model Partner {
+  id         String   @id @default(cuid())
+  name       String
+  logoUrl    String
+  websiteUrl String?
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+}
+
+// Team Members
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  title     String
+  bio       String
+  imageUrl  String?
+  linkedIn  String?
+  email     String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
