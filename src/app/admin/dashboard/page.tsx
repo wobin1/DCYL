@@ -146,12 +146,12 @@ export default async function AdminDashboard() {
                                 </p>
                             </a>
                             <a
-                                href="/admin/events"
+                                href="/admin"
                                 className="p-4 border border-slate-200 rounded-lg hover:border-teal-500 hover:bg-teal-50 transition-colors"
                             >
-                                <h3 className="font-semibold text-slate-900">Events</h3>
+                                <h3 className="font-semibold text-slate-900">Essay Submissions</h3>
                                 <p className="text-sm text-slate-600 mt-1">
-                                    Create and manage upcoming events
+                                    Review entries and assess student essays
                                 </p>
                             </a>
                         </div>

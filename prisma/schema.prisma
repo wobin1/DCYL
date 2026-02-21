@@ -16,6 +16,8 @@ model Submission {
   essayTitle  String
   content     String?
   filePath    String?
+  score       Int?
+  feedback    String?
   createdAt   DateTime @default(now())
   status      String   @default("PENDING")
 }

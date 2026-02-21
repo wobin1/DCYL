@@ -142,6 +142,25 @@ export async function login(formData: any) {
     return { success: false, error: "Invalid username or password" };
 }
 
+export async function updateSubmissionScore(id: string, data: { score: number; feedback?: string }) {
+    try {
+        await prisma.submission.update({
+            where: { id },
+            data: {
+                score: data.score,
+                feedback: data.feedback,
+                status: "GRADED",
+            },
+        });
+
+        revalidatePath("/admin");
+        return { success: true };
+    } catch (error) {
+        console.error("Update score error:", error);
+        return { success: false, error: "Failed to update score" };
+    }
+}
+
 export async function createAdminUser(formData: any) {
     try {
         const { username, password } = formData;
